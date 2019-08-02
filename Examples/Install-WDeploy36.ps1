@@ -1,15 +1,15 @@
 ﻿Import-Module Microsoft.Web.PlatformInstaller
 
 # -------------------------------------------------------------------------------------------
-# PlatformInstaller : Start
+# PlatformInstaller : ProductManager erstellen und Produkte laden
 # -------------------------------------------------------------------------------------------
 $ProductManager = New-ProductManager
-$InstallManager = New-InstallManager
 $culture = get-culture
 $Language = Get-Language -LanguageId ($culture.TwoLetterISOLanguageName)
 
 # -------------------------------------------------------------------------------------------
-# "Web Deploy 3.6"
+# Produkt "Web Deploy 3.6" abrufen und Installationsstatus überprüfen und ggfs. ein die 
+# Auftragsliste hinzufügen.
 # -------------------------------------------------------------------------------------------
 $Product = Get-Product -ProductId "WDeploy36"
 if (-not (Test-ProductIsInstalled -Product $Product))
@@ -22,10 +22,12 @@ else
 }
 
 # -------------------------------------------------------------------------------------------
-# Softwareinstallation
+# Softwareinstallation: InstallerManager erstellen, die Aufträge übergeben und die 
+# Softwareinstallationen starten
 # -------------------------------------------------------------------------------------------
 if ($InstallerCollection.Count -gt 0)
 {
+    $InstallManager = New-InstallManager
     Set-InstallManager -InstallerCollection $InstallerCollection
 	Start-Installation
 }
