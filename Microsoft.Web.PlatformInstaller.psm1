@@ -15,8 +15,7 @@ function New-WebPlatformInstaller
 {
     New-ProductManager | Out-Null
     New-InstallManager | Out-Null
-    $culture = get-culture
-    $Global:WebPiLanguage = Get-Language -LanguageId ($culture.TwoLetterISOLanguageName)
+    $Global:WebPiLanguage = Get-Language -LanguageId ((get-culture).TwoLetterISOLanguageName)
 }
 
 function Install-Product
@@ -37,12 +36,14 @@ function Install-Product
                    ParameterSetName='Product')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
-        [Microsoft.Web.PlatformInstaller.Product[]] $Product
+        [Microsoft.Web.PlatformInstaller.Product[]] $Product,
+
+        [Microsoft.Web.PlatformInstaller.Language] $Language
     )
 
     if ($PSCmdlet.ParameterSetName -eq "Product")
     {
-        $InstallerCollection = New-InstallerCollection -product $Product
+        if (-not ($Language)) { $InstallerCollection = New-InstallerCollection -product $Product } else { $InstallerCollection = New-InstallerCollection -product $Product -Language $Language }
         Set-InstallManager -InstallerCollection $InstallerCollection
         Start-Installation
     }
@@ -166,7 +167,7 @@ function Get-Language
 
 function Get-Product
 {
-    [CmdletBinding(DefaultParameterSetName='All', 
+    [CmdletBinding(DefaultParameterSetName='Language', 
                   SupportsShouldProcess=$false, 
                   PositionalBinding=$true,
                   HelpUri = 'http://www.microsoft.com/',
@@ -189,6 +190,16 @@ function Get-Product
                    ValueFromPipelineByPropertyName=$true, 
                    ValueFromRemainingArguments=$false, 
                    Position=0,
+                   ParameterSetName='Language')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [String] $LanguageId = ((get-culture).TwoLetterISOLanguageName),
+
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
                    ParameterSetName='All')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
@@ -198,6 +209,12 @@ function Get-Product
     if ($PSCmdlet.ParameterSetName -eq "Product")
     {
         $Global:ProductManager.GetProduct($ProductId)
+    }
+
+    if ($PSCmdlet.ParameterSetName -eq "Language")
+    {
+        $Global:WebPiLanguage = Get-Language -LanguageId $LanguageId
+        $Global:WebPiLanguage.AvailableProducts
     }
 
     if ($PSCmdlet.ParameterSetName -eq "All")
