@@ -9,12 +9,41 @@
 # https://webpifeed.blob.core.windows.net/webpifeed/ToolsProductList.xml
 # https://webpifeed.blob.core.windows.net/webpifeed/EnterpriseProductList.xml
 
-function New-WebPlatformInstaller
+function New-PlatformInstaller
 {
     New-ProductManager | Out-Null
     New-InstallManager | Out-Null
     $culture = get-culture
     $Global:WebPiLanguage = Get-Language -LanguageId ($culture.TwoLetterISOLanguageName)
+}
+
+function Install-Product
+{
+    [CmdletBinding(DefaultParameterSetName='Product', 
+                  SupportsShouldProcess=$false, 
+                  PositionalBinding=$true,
+                  HelpUri = 'http://www.microsoft.com/',
+                  ConfirmImpact='Medium')]
+    [Alias()]
+    [OutputType([Object])]
+    param(
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='Product')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [Microsoft.Web.PlatformInstaller.Product[]] $Product
+    )
+
+    if ($PSCmdlet.ParameterSetName -eq "Product")
+    {
+        $InstallerCollection = New-InstallerCollection -product $Product
+        Set-InstallManager -InstallerCollection $InstallerCollection
+        Start-Installation
+    }
 }
 
 # ----------------------------------------------------------------
