@@ -340,7 +340,7 @@ function Start-Installation
         $result = $Global:InstallManager.DownloadInstallerFile($InstallerContext, [ref] $failureReason)
         if (-not ($result))
         {
-            throw "Download fehlgeschlagen..."
+            throw $failureReason
         }
     
         while ($true)
