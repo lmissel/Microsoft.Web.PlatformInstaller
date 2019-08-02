@@ -19,7 +19,7 @@ function New-ProductManager
 
     Register-ObjectEvent -InputObject $Global:ProductManager -EventName "WebPlatformInstallerUpdateAvailable" -Action {
         (New-Event -SourceIdentifier "WebPlatformInstallerUpdateAvailable" -Sender $args[0] –EventArguments $args[1].SourceEventArgs.NewEvent.TargetInstance)
-    }
+    } | Out-Null
 
     # Produkte laden...
     $Global:ProductManager.Load()
@@ -213,6 +213,16 @@ function Update-WebPlatformBinary
 {
     $Global:ProductManager.UpdateWebPlatformBinary()
 }
+
+function Test-ProductIsInstalled
+{
+    param(
+        [Microsoft.Web.PlatformInstaller.Product] $Product
+    )
+
+    $Product.IsInstalled($false)
+
+}
 #endregion
 
 # ----------------------------------------------------------------
@@ -225,11 +235,11 @@ function New-InstallManager
 
     Register-ObjectEvent -InputObject $Global:InstallManager -EventName "InstallCompleted" -Action {
         (New-Event -SourceIdentifier "InstallCompleted" -Sender $args[0] –EventArguments $args[1].SourceEventArgs.NewEvent.TargetInstance)
-    }
+    } | Out-Null
 
     Register-ObjectEvent -InputObject $Global:InstallManager -EventName "InstallerStatusUpdated" -Action {
         (New-Event -SourceIdentifier "InstallerStatusUpdated" -Sender $args[0] –EventArguments $args[1].SourceEventArgs.NewEvent.TargetInstance)
-    }
+    } | Out-Null
 
     return $Global:InstallManager
 }
@@ -271,17 +281,68 @@ function Start-Installation
     $failureReason = $null
     foreach($InstallerContext in $Global:InstallManager.InstallerContexts)
     {
-        $Global:InstallManager.DownloadInstallerFile($InstallerContext, [ref]$failureReason)
+        $result = $Global:InstallManager.DownloadInstallerFile($InstallerContext, [ref] $failureReason)
+        if (-not ($result))
+        {
+            throw "Download fehlgeschlagen..."
+        }
+    
+        while ($true)
+        {
+            $event = Wait-Event -SourceIdentifier InstallerStatusUpdated
+            if ($event.Sender.InstallerContexts[0].InstallationState -eq "Downloaded")
+            {
+                Remove-Event -EventIdentifier $event.EventIdentifier
+                break
+            }
+        }
+
+        if ($InstallerContext.Product.IsApplication)
+        {
+            $Global:InstallManager.StartApplicationInstallation()
+            while ($true)
+            {
+                $event = Wait-Event -SourceIdentifier InstallCompleted
+                if ($event.Sender.InstallerContexts[0].InstallationState -eq "InstallCompleted")
+                {        
+                    $ReturnCode = $event.Sender.InstallerContexts[0].ReturnCode
+                    Remove-Event -EventIdentifier $event.EventIdentifier
+                    $ReturnCode
+                    break
+                }
+            }
+        }
+        elseif ($InstallerContext.Product.IsIisComponent)
+        {
+            $Global:InstallManager.StartSynchronousInstallation()
+            while ($true)
+            {
+                $event = Wait-Event -SourceIdentifier InstallCompleted
+                if ($event.Sender.InstallerContexts[0].InstallationState -eq "InstallCompleted")
+                {        
+                    $ReturnCode = $event.Sender.InstallerContexts[0].ReturnCode
+                    Remove-Event -EventIdentifier $event.EventIdentifier
+                    $ReturnCode
+                    break
+                }
+            }
+        }
+        else
+        {
+            $Global:InstallManager.StartInstallation()
+            while ($true)
+            {
+                $event = Wait-Event -SourceIdentifier InstallCompleted
+                if ($event.Sender.InstallerContexts[0].InstallationState -eq "InstallCompleted")
+                {        
+                    $ReturnCode = $event.Sender.InstallerContexts[0].ReturnCode
+                    Remove-Event -EventIdentifier $event.EventIdentifier
+                    $ReturnCode
+                    break
+                }
+            }
+        }
     }
-
-    $Global:InstallManager.StartInstallation()
-    # überwachen...
-
-    $Global:InstallManager.StartApplicationInstallation()
-    # überwachen...
-
-    $Global:InstallManager.StartSynchronousInstallation()
-    # überwachen...
 }
 #endregion
 
