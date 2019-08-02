@@ -1,15 +1,17 @@
 ﻿# ----------------------------------------------------------------
 # Module: Microsoft.Web.PlatformInstaller
+# 
+# Links:
+# -> https://webgallery.microsoft.com/
+# -> https://webgallery.microsoft.com/feed/webapplicationlist.xml
+# -> https://webpifeed.blob.core.windows.net/webpifeed/WebProductList.xml
+# -> https://webpifeed.blob.core.windows.net/webpifeed/MediaProductList.xml
+# -> https://webpifeed.blob.core.windows.net/webpifeed/ToolsProductList.xml
+# -> https://webpifeed.blob.core.windows.net/webpifeed/EnterpriseProductList.xml
 # ----------------------------------------------------------------
 [reflection.assembly]::LoadWithPartialName("Microsoft.Web.PlatformInstaller") | Out-Null
 
-# https://webgallery.microsoft.com/feed/webapplicationlist.xml
-# https://webpifeed.blob.core.windows.net/webpifeed/WebProductList.xml
-# https://webpifeed.blob.core.windows.net/webpifeed/MediaProductList.xml
-# https://webpifeed.blob.core.windows.net/webpifeed/ToolsProductList.xml
-# https://webpifeed.blob.core.windows.net/webpifeed/EnterpriseProductList.xml
-
-function New-PlatformInstaller
+function New-WebPlatformInstaller
 {
     New-ProductManager | Out-Null
     New-InstallManager | Out-Null
