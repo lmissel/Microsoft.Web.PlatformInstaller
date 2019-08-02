@@ -9,6 +9,14 @@
 # https://webpifeed.blob.core.windows.net/webpifeed/ToolsProductList.xml
 # https://webpifeed.blob.core.windows.net/webpifeed/EnterpriseProductList.xml
 
+function New-WebPlatformInstaller
+{
+    New-ProductManager
+    New-InstallManager
+    $culture = get-culture
+    $Global:WebPiLanguage = Get-Language -LanguageId ($culture.TwoLetterISOLanguageName)
+}
+
 # ----------------------------------------------------------------
 # ProductManager
 # ----------------------------------------------------------------
@@ -355,7 +363,7 @@ function New-InstallerCollection
 {
     param(
         [Microsoft.Web.PlatformInstaller.Product[]] $product,
-        [Microsoft.Web.PlatformInstaller.Language] $Language
+        [Microsoft.Web.PlatformInstaller.Language] $Language = $Global:WebPiLanguage
     )
     
     $Global:InstallerCollection = [System.Collections.Generic.List[Microsoft.Web.PlatformInstaller.Installer]]::new()
@@ -418,7 +426,7 @@ function Add-Installer
         [ValidateNotNullOrEmpty()]
         [Microsoft.Web.PlatformInstaller.Product] $product,
 
-        [Parameter(Mandatory=$true, 
+        [Parameter(Mandatory=$false, 
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true, 
                    ValueFromRemainingArguments=$false, 
@@ -426,7 +434,7 @@ function Add-Installer
                    ParameterSetName='Product')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
-        [Microsoft.Web.PlatformInstaller.Language] $Language
+        [Microsoft.Web.PlatformInstaller.Language] $Language = $Global:WebPiLanguage
     )
 
     Begin
