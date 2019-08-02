@@ -418,7 +418,14 @@ function New-InstallerCollection
 
     foreach ($p in $product)
     {
-        $Global:InstallerCollection.Add($p.GetInstaller($Language))
+        if (-not (Test-ProductIsInstalled -Product $p))
+        {
+            $Global:InstallerCollection.Add($p.GetInstaller($Language))
+        }
+        else
+        {
+            Write-Warning "The product is already installed and was skipped."
+        }
     }
 
     return $Global:InstallerCollection
