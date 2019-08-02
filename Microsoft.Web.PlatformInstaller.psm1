@@ -43,46 +43,170 @@ function Set-ProductManager
 
 function Get-Keyword
 {
+    [CmdletBinding(DefaultParameterSetName='All', 
+                  SupportsShouldProcess=$false, 
+                  PositionalBinding=$true,
+                  HelpUri = 'http://www.microsoft.com/',
+                  ConfirmImpact='Medium')]
+    [Alias()]
+    [OutputType([Microsoft.Web.PlatformInstaller.Keyword[]])]
     param(
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='Keyword')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [String] $Id,
+
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='All')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [Switch] $All
     )
-    
-    $Global:ProductManager.GetKeyword($Id)
-    $Global:ProductManager.Keywords
+
+    if ($PSCmdlet.ParameterSetName -eq "Keyword")
+    {
+        $Global:ProductManager.GetKeyword($Id)
+    }
+
+    if ($PSCmdlet.ParameterSetName -eq "All")
+    {
+        $Global:ProductManager.Keywords
+    }
 }
 
 function Get-Language
 {
+    [CmdletBinding(DefaultParameterSetName='All', 
+                  SupportsShouldProcess=$false, 
+                  PositionalBinding=$true,
+                  HelpUri = 'http://www.microsoft.com/',
+                  ConfirmImpact='Medium')]
+    [Alias()]
+    [OutputType([Microsoft.Web.PlatformInstaller.Language[]])]
     param(
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='Language')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [String] $LanguageId,
+
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='All')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [Switch] $All
     )
-    
-    $Global:ProductManager.GetLanguage($LanguageId)
-    $Global:ProductManager.Languages
+
+    if ($PSCmdlet.ParameterSetName -eq "Language")
+    {
+        $Global:ProductManager.GetLanguage($LanguageId)
+    }
+
+    if ($PSCmdlet.ParameterSetName -eq "All")
+    {
+        $Global:ProductManager.Languages
+    }
 }
 
 function Get-Product
 {
+    [CmdletBinding(DefaultParameterSetName='All', 
+                  SupportsShouldProcess=$false, 
+                  PositionalBinding=$true,
+                  HelpUri = 'http://www.microsoft.com/',
+                  ConfirmImpact='Medium')]
+    [Alias()]
+    [OutputType([Microsoft.Web.PlatformInstaller.Product[]])]
     param(
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='Product')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [String] $ProductId,
+
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='All')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [Switch] $All
     )
 
-    $Global:ProductManager.Products
-    $Global:ProductManager.GetProduct($ProductId)
+    if ($PSCmdlet.ParameterSetName -eq "Product")
+    {
+        $Global:ProductManager.GetProduct($ProductId)
+    }
+
+    if ($PSCmdlet.ParameterSetName -eq "All")
+    {
+        $Global:ProductManager.Products
+    }
 }
 
 function Get-Tab
 {
+    [CmdletBinding(DefaultParameterSetName='All', 
+                  SupportsShouldProcess=$false, 
+                  PositionalBinding=$true,
+                  HelpUri = 'http://www.microsoft.com/',
+                  ConfirmImpact='Medium')]
+    [Alias()]
+    [OutputType([Microsoft.Web.PlatformInstaller.Tab[]])]
     param(
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='Tab')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [String] $tabId,
+
+        [Parameter(Mandatory=$false, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0,
+                   ParameterSetName='All')]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [Switch] $All
     )
 
-    $Global:ProductManager.Tabs
-    $Global:ProductManager.GetTab($tabId)
+    if ($PSCmdlet.ParameterSetName -eq "tab")
+    {
+        $Global:ProductManager.GetTab($tabId)
+    }
+
+    if ($PSCmdlet.ParameterSetName -eq "All")
+    {
+        $Global:ProductManager.Tabs
+    }
 }
 
 function Update-WebPlatformBinary
@@ -203,7 +327,7 @@ function Get-InstallerCollection
     }
 }
 
-function Set-InstallerCollection
+function Add-Installer
 {
     [CmdletBinding(DefaultParameterSetName='Installer', 
                   SupportsShouldProcess=$false, 
