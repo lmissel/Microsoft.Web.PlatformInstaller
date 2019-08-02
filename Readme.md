@@ -19,12 +19,11 @@ Import-Module Microsoft.Web.PlatformInstaller
 # WebPlatformInstaller : Start
 New-WebPlatfromInstaller
 
-# "Url Rewrite 2.1"
+# Produkt "Url Rewrite 2.1" suchen und als Installationsauftrag übergeben
 $Product = Get-Product -ProductId "UrlRewrite2"
 $InstallerCollection = New-InstallerCollection -product $Product
 Set-InstallManager -InstallerCollection $InstallerCollection
 
 #Start Installation
 Start-Installation
-
 ```

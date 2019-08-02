@@ -11,8 +11,8 @@
 
 function New-WebPlatformInstaller
 {
-    New-ProductManager
-    New-InstallManager
+    New-ProductManager | Out-Null
+    New-InstallManager | Out-Null
     $culture = get-culture
     $Global:WebPiLanguage = Get-Language -LanguageId ($culture.TwoLetterISOLanguageName)
 }
