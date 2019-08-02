@@ -1,6 +1,6 @@
 # Microsoft.Web.PlatformInstaller
 
-Dieses PowerShell Module ermöglicht es Applikationen, Features und Tools aus den PlatformInstaller über die PowerShell zu installieren. Wodurch eine Automatisierte Installation ermöglicht wird.
+Dieses PowerShell Module ermöglicht es Applikationen, Features und Tools aus den PlatformInstaller über die PowerShell zu installieren.
 
 ## Voraussetzungen
 
